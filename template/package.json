@@ -5,16 +5,25 @@
   "author": "{{ author }}",
   "private": true,
   "scripts": {
-    "dev": "node build/dev-server.js",
-    "start": "node build/dev-server.js",
-    "build": "node build/build.js"{{#unit}},
+    "copy:dev": "node ./tool/copy.js ./env/dev.env.js ./src/env.js",
+    "copy:test": "node ./tool/copy.js ./env/test.env.js ./src/env.js",
+    "copy:build": "node ./tool/copy.js ./env/build.env.js ./src/env.js",
+    "generate:route": "node ../tool/route.generate.js ./entry ./config/route.js",
+    "generate:vuex": "node ../tool/vuex.generate.js ./vuex ./vuex/store.js",
+    "test": "npm run generate:route && npm run generate:vuex && npm run copy:test && node build/dev-server.js",
+    "dev": "npm run generate:route && npm run generate:vuex && npm run copy:dev && node build/dev-server.js",
+    "start": "npm run generate:route && npm run generate:vuex && npm run copy:dev && node build/dev-server.js",
+    "build": "npm run generate:route && npm run generate:vuex && npm run copy:build && node build/build.js"{{#unit}},
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run"{{/unit}}{{#e2e}},
     "e2e": "node test/e2e/runner.js"{{/e2e}}{{#if_or unit e2e}},
     "test": "{{#unit}}npm run unit{{/unit}}{{#unit}}{{#e2e}} && {{/e2e}}{{/unit}}{{#e2e}}npm run e2e{{/e2e}}"{{/if_or}}{{#lint}},
     "lint": "eslint --ext .js,.vue src{{#unit}} test/unit/specs{{/unit}}{{#e2e}} test/e2e/specs{{/e2e}}"{{/lint}}
   },
   "dependencies": {
+    "es6-promise": "^4.1.0",
     "vue": "^2.3.3"{{#router}},
+    "vue-resource": "^1.3.1",
+    "vuex": "^2.2.1",
     "vue-router": "^2.6.0"{{/router}}
   },
   "devDependencies": {
